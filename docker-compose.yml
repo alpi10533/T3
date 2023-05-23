@@ -1,0 +1,23 @@
+version: '3'
+services:
+  mysql:
+    image: mysql:8
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: t3dbRoot!
+      MYSQL_DATABASE: t3_database
+    volumes:
+      - ./t3-db:/var/lib/mysql
+    ports:
+      - "3306:3306"
+  api:
+    build: ./
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/t3_database?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: t3dbRoot!
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
