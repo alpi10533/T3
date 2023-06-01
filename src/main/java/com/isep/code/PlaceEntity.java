@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.DayOfWeek;
+import java.time.LocalTime;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -27,25 +30,25 @@ public class PlaceEntity {
     private String type;
 
     @Column(name = "latitude", nullable = false)
-    private String latitude;
+    private double latitude;
 
     @Column(name = "longitude", nullable = false)
-    private String longitude;
+    private double longitude;
 
     @Column(name = "start_day", nullable = false)
-    private String start_day;
+    DayOfWeek startDay;
 
     @Column(name = "end_day", nullable = false)
-    private String end_day;
+    DayOfWeek endDay;
 
     @Column(name = "start_hour", nullable = false)
-    private String start_hour;
+    LocalTime startHour;
 
     @Column(name = "end_hour", nullable = false)
-    private String end_hour;
+    LocalTime endHour;
 
     @Column(name = "price", nullable = false)
-    private String price;
+    private double price;
 
 }
 
