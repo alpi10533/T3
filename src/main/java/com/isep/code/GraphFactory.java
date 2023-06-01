@@ -52,7 +52,7 @@ public class GraphFactory {
             for (String place2 : coordinates.keySet()) {
                 if (!place1.equals(place2)) {
                     Coordinate coord2 = coordinates.get(place2);
-                    double distance = Helper.calculateDistance(coord1, coord2);
+                    double distance = Helper.calculateDistance(coord1, coord2, 2);
                     distances.add(new Distance(place2, distance));
                 }
             }
