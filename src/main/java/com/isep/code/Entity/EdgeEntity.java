@@ -30,4 +30,8 @@ public class EdgeEntity {
     @Column(name = "weight", nullable = false)
     private double weight;
 
+    @ManyToOne
+    @JoinColumn(name = "id_graph")
+    private GraphEntity graph;
+
 }

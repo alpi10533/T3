@@ -1,21 +1,19 @@
-package com.isep.code;
+package com.isep.code.Utils;
 
 import com.google.maps.DistanceMatrixApi;
 import com.google.maps.GeoApiContext;
 import com.google.maps.model.DistanceMatrix;
 import com.google.maps.model.LatLng;
 import com.google.maps.model.TravelMode;
-import com.isep.code.Entity.CoordinateEntity;
 
 public class Helper {
 
-    // Méthode pour calculer la distance entre deux coordonnées géographiques (distance euclidienne)
-    public static double calculateDistance(CoordinateEntity coord1, CoordinateEntity coord2, int intMode) {
+    public static double calculateDistance(Coordinate coord1, Coordinate coord2, int intMode) {
         GeoApiContext context = new GeoApiContext.Builder()
                 .apiKey("AIzaSyBv1RNdSPkEVqTjPP6sL5y9KOKUDJLqxPg")
                 .build();
-        LatLng origin = new LatLng(coord1.getLatitude(), coord1.getLongitude());
-        LatLng destination = new LatLng(coord2.getLatitude(), coord2.getLongitude());
+        LatLng origin = new LatLng(coord1.latitude(), coord1.longitude());
+        LatLng destination = new LatLng(coord2.latitude(), coord2.longitude());
         TravelMode travelMode = null;
         switch (intMode) {
             case 1 -> travelMode = TravelMode.DRIVING;

@@ -1,11 +1,11 @@
 package com.isep.code.Service;
 
-import com.isep.code.Entity.CoordinateEntity;
-import com.isep.code.Entity.EdgeEntity;
-import com.isep.code.Entity.GraphEntity;
-import com.isep.code.Entity.PlaceEntity;
-import com.isep.code.Helper;
-import com.isep.code.OLD.Distance;
+import com.isep.code.Entity.*;
+import com.isep.code.Repository.EdgeRepository;
+import com.isep.code.Repository.NodeRepository;
+import com.isep.code.Utils.Coordinate;
+import com.isep.code.Utils.Distance;
+import com.isep.code.Utils.Helper;
 import com.isep.code.Repository.GraphRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,49 +16,77 @@ import java.util.*;
 public class GraphService {
 
     private final GraphRepository graphRepository;
+    private final EdgeRepository edgeRepository;
+    private final NodeRepository nodeRepository;
+
+
 
     @Autowired
-    public GraphService(GraphRepository graphRepository) {
+    public GraphService(GraphRepository graphRepository, EdgeRepository edgeRepository, NodeRepository nodeRepository) {
         this.graphRepository = graphRepository;
+        this.edgeRepository = edgeRepository;
+        this.nodeRepository = nodeRepository;
     }
 
-    public void saveGraph(List<PlaceEntity> placeEntities, int numberOfNeighbors, int travelMode) {
-
-        GraphEntity graphEntity = new GraphEntity();
-
+    public void initGraph(GraphEntity graph, List<PlaceEntity> places, int numberOfNeighbors, int travelMode) {
         List<EdgeEntity> edges = new ArrayList<>();
-
-        for (PlaceEntity place1 : placeEntities) {
-
-            CoordinateEntity coord1 = place1.getCoordinate();
+        for (PlaceEntity place1 : places) {
+            Coordinate coord1 = new Coordinate(place1.getLatitude(), place1.getLongitude());
             List<Distance> distances = new ArrayList<>();
-
-            // Calculer les distances vers tous les autres lieux
-            for (PlaceEntity place2 : placeEntities) {
+            for (PlaceEntity place2 : places) {
                 if (!place1.equals(place2)) {
-                    CoordinateEntity coord2 = place2.getCoordinate();
-                    double distance = Helper.calculateDistance(coord1, coord2, 2);
+                    Coordinate coord2 = new Coordinate(place2.getLatitude(), place2.getLongitude());
+                    System.out.println(coord1);
+                    double distance = Helper.calculateDistance(coord1, coord2, travelMode);
                     distances.add(new Distance(place2, distance));
                 }
             }
-
-            // Trier les distances par ordre croissant
             Collections.sort(distances);
-
-            // Relier le lieu aux k plus proches voisins
             for (int i = 0; i < numberOfNeighbors && i < distances.size(); i++) {
-                String neighbor = distances.get(i).getPlace();
-                double distance = distances.get(i).getDistance();
-                EdgeEntity edgeEntity = new EdgeEntity();
-                edgeEntity.setSource(place1);
-                edgeEntity.setDestination(neighbor);
-                edgeEntity.setWeight(distance);
+                PlaceEntity neighbor = distances.get(i).place();
+                double distance = distances.get(i).distance();
+                EdgeEntity edgeEntity = saveEdge(graph, place1, neighbor, distance);
                 edges.add(edgeEntity);
             }
 
         }
-        graphEntity.setEdgeEntities(new HashSet<>(edges));
+        graph.setEdges(new HashSet<>(edges));
+        graphRepository.save(graph);
+    }
+
+    public GraphEntity saveGraph() {
+        GraphEntity graphEntity = new GraphEntity();
         graphRepository.save(graphEntity);
+        return graphEntity;
+    }
+
+    public EdgeEntity saveEdge(GraphEntity graph, PlaceEntity place1, PlaceEntity neighbor, double weight) {
+        NodeEntity source = findNodeByPlace(place1);
+        if (source == null) {
+            source = saveNode(place1);
+        }
+        NodeEntity destination = findNodeByPlace(neighbor);
+        if (destination == null) {
+            destination = saveNode(neighbor);
+        }
+        EdgeEntity edgeEntity = new EdgeEntity();
+        edgeEntity.setSource(source);
+        edgeEntity.setDestination(destination);
+        edgeEntity.setWeight(weight);
+        edgeEntity.setGraph(graph);
+        edgeRepository.save(edgeEntity);
+        return edgeEntity;
+    }
+
+    public NodeEntity saveNode(PlaceEntity place) {
+        NodeEntity nodeEntity = new NodeEntity();
+        nodeEntity.setPlace(place);
+        nodeRepository.save(nodeEntity);
+        return nodeEntity;
+    }
+
+    public NodeEntity findNodeByPlace(PlaceEntity place) {
+        return nodeRepository.findByPlace(place);
     }
 
 }
