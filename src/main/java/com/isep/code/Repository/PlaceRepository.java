@@ -1,5 +1,6 @@
-package com.isep.code;
+package com.isep.code.Repository;
 
+import com.isep.code.Entity.PlaceEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
