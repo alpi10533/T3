@@ -1,4 +1,4 @@
-package com.isep.code;
+package com.isep.code.Entity;
 
 
 import jakarta.persistence.*;
@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.DayOfWeek;
+import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -26,26 +29,24 @@ public class PlaceEntity {
     @Column(name = "type", nullable = false)
     private String type;
 
-    @Column(name = "latitude", nullable = false)
-    private String latitude;
-
-    @Column(name = "longitude", nullable = false)
-    private String longitude;
-
     @Column(name = "start_day", nullable = false)
-    private String start_day;
+    DayOfWeek startDay;
 
     @Column(name = "end_day", nullable = false)
-    private String end_day;
+    DayOfWeek endDay;
 
     @Column(name = "start_hour", nullable = false)
-    private String start_hour;
+    LocalTime startHour;
 
     @Column(name = "end_hour", nullable = false)
-    private String end_hour;
+    LocalTime endHour;
 
     @Column(name = "price", nullable = false)
-    private String price;
+    private double price;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_coordinate", nullable = false)
+    private CoordinateEntity coordinate;
 
 }
 
