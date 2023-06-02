@@ -14,7 +14,6 @@ import java.time.LocalTime;
 public class Application {
 
     public static void main(String[] args) {
-
         ApplicationContext ctx = SpringApplication.run(Application.class, args);
         PlaceService placeService = ctx.getBean(PlaceService.class);
         placeService.savePlace("La tour Eiffel", "Monument", 48.85856768770539, 2.2944813100320407, DayOfWeek.MONDAY, DayOfWeek.SUNDAY, LocalTime.of(9, 0, 0), LocalTime.of(0, 45, 0), 26.80);

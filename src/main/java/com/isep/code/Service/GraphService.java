@@ -20,7 +20,6 @@ public class GraphService {
     private final NodeRepository nodeRepository;
 
 
-
     @Autowired
     public GraphService(GraphRepository graphRepository, EdgeRepository edgeRepository, NodeRepository nodeRepository) {
         this.graphRepository = graphRepository;
