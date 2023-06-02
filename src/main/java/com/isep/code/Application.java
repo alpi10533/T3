@@ -2,6 +2,7 @@ package com.isep.code;
 
 import com.isep.code.Entity.CoordinateEntity;
 import com.isep.code.Service.CoordinateService;
+import com.isep.code.Service.GraphService;
 import com.isep.code.Service.PlaceService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -120,6 +121,10 @@ public class Application {
 
         CoordinateEntity coordinateEntity34 = coordinateService.saveCoordinate(48.84220928620018, 2.321961579713815);
         placeService.savePlace("Observatoire Paris Montparnasse", "Monument", coordinateEntity34, DayOfWeek.MONDAY, DayOfWeek.SUNDAY, LocalTime.of(9, 30, 0), LocalTime.of(22, 30, 0), 20.00);
+
+        GraphService graphService = ctx.getBean(GraphService.class);
+        graphService.saveGraph(placeService.getAllPlaces(), 5, 2);
+
 
     }
 

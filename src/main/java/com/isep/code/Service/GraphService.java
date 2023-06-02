@@ -1,11 +1,8 @@
 package com.isep.code.Service;
 
-import com.isep.code.Entity.CoordinateEntity;
-import com.isep.code.Entity.EdgeEntity;
-import com.isep.code.Entity.GraphEntity;
-import com.isep.code.Entity.PlaceEntity;
-import com.isep.code.Helper;
-import com.isep.code.OLD.Distance;
+import com.isep.code.Entity.*;
+import com.isep.code.Utils.Distance;
+import com.isep.code.Utils.Helper;
 import com.isep.code.Repository.GraphRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,11 +44,15 @@ public class GraphService {
 
             // Relier le lieu aux k plus proches voisins
             for (int i = 0; i < numberOfNeighbors && i < distances.size(); i++) {
-                String neighbor = distances.get(i).getPlace();
+                PlaceEntity neighbor = distances.get(i).getPlace();
                 double distance = distances.get(i).getDistance();
                 EdgeEntity edgeEntity = new EdgeEntity();
-                edgeEntity.setSource(place1);
-                edgeEntity.setDestination(neighbor);
+                NodeEntity nodeEntity1 = new NodeEntity();
+                nodeEntity1.setPlace(place1);
+                edgeEntity.setSource(nodeEntity1);
+                NodeEntity nodeEntity2 = new NodeEntity();
+                nodeEntity2.setPlace(neighbor);
+                edgeEntity.setDestination(nodeEntity2);
                 edgeEntity.setWeight(distance);
                 edges.add(edgeEntity);
             }

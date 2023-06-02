@@ -1,4 +1,4 @@
-package com.isep.code;
+package com.isep.code.Utils;
 
 import com.google.maps.DistanceMatrixApi;
 import com.google.maps.GeoApiContext;

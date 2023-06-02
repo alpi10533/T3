@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
+import java.util.List;
 
 @Service
 public class PlaceService {
@@ -30,6 +31,10 @@ public class PlaceService {
         placeEntity.setPrice(price);
         placeEntity.setCoordinate(coordinate);
         placeRepository.save(placeEntity);
+    }
+
+    public List<PlaceEntity> getAllPlaces() {
+        return placeRepository.findAll();
     }
 
 }
