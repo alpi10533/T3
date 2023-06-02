@@ -45,9 +45,9 @@ public class Application {
         placeService.savePlace("Opéra national de Paris", "Monument", 48.8723068631308, 2.3316018265859415, DayOfWeek.MONDAY, DayOfWeek.SUNDAY, LocalTime.of(10, 0, 0), LocalTime.of(17, 0, 0), 14.00);
         placeService.savePlace("Cimetière du Père Lachaise", "Quartier d'intérêt", 48.861521349900606, 2.393515417905678, DayOfWeek.MONDAY, DayOfWeek.SUNDAY, LocalTime.of(8, 30, 0), LocalTime.of(17, 30, 0), 0.00);
         placeService.savePlace("Observatoire Paris Montparnasse", "Monument", 48.84220928620018, 2.321961579713815, DayOfWeek.MONDAY, DayOfWeek.SUNDAY, LocalTime.of(9, 30, 0), LocalTime.of(22, 30, 0), 20.00);
-        GraphService graphService = ctx.getBean(GraphService.class);
-        GraphEntity graph = graphService.saveGraph();
-        graphService.initGraph(graph, placeService.getAllPlaces(), 2, 1);
+        //GraphService graphService = ctx.getBean(GraphService.class);
+        //GraphEntity graph = graphService.saveGraph();
+        //graphService.initGraph(graph, placeService.getAllPlaces(), 2, 1);
     }
 
 }
