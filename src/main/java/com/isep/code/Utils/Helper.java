@@ -5,12 +5,11 @@ import com.google.maps.GeoApiContext;
 import com.google.maps.model.DistanceMatrix;
 import com.google.maps.model.LatLng;
 import com.google.maps.model.TravelMode;
-import com.isep.code.Entity.CoordinateEntity;
 
 public class Helper {
 
     // Méthode pour calculer la distance entre deux coordonnées géographiques (distance euclidienne)
-    public static double calculateDistance(CoordinateEntity coord1, CoordinateEntity coord2, int intMode) {
+    public static double calculateDistance(Coordinate coord1, Coordinate coord2, int intMode) {
         GeoApiContext context = new GeoApiContext.Builder()
                 .apiKey("AIzaSyBv1RNdSPkEVqTjPP6sL5y9KOKUDJLqxPg")
                 .build();

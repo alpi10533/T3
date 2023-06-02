@@ -30,6 +30,12 @@ public class PlaceEntity {
     @Column(name = "type", nullable = false)
     private String type;
 
+    @Column(name = "latitude", nullable = false)
+    private double latitude;
+
+    @Column(name = "longitude", nullable = false)
+    private double longitude;
+
     @Column(name = "start_day", nullable = false)
     DayOfWeek startDay;
 
@@ -44,10 +50,6 @@ public class PlaceEntity {
 
     @Column(name = "price", nullable = false)
     private double price;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_coordinate", nullable = false)
-    private CoordinateEntity coordinate;
 
 }
 
