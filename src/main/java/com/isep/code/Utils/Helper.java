@@ -8,13 +8,12 @@ import com.google.maps.model.TravelMode;
 
 public class Helper {
 
-    // Méthode pour calculer la distance entre deux coordonnées géographiques (distance euclidienne)
     public static double calculateDistance(Coordinate coord1, Coordinate coord2, int intMode) {
         GeoApiContext context = new GeoApiContext.Builder()
                 .apiKey("AIzaSyBv1RNdSPkEVqTjPP6sL5y9KOKUDJLqxPg")
                 .build();
-        LatLng origin = new LatLng(coord1.getLatitude(), coord1.getLongitude());
-        LatLng destination = new LatLng(coord2.getLatitude(), coord2.getLongitude());
+        LatLng origin = new LatLng(coord1.latitude(), coord1.longitude());
+        LatLng destination = new LatLng(coord2.latitude(), coord2.longitude());
         TravelMode travelMode = null;
         switch (intMode) {
             case 1 -> travelMode = TravelMode.DRIVING;

@@ -25,10 +25,10 @@ public class NodeEntity {
     @JoinColumn(name = "id_place")
     private PlaceEntity place;
 
-    @OneToMany(mappedBy = "source", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "source", cascade = CascadeType.MERGE)
     private Set<EdgeEntity> sources;
 
-    @OneToMany(mappedBy = "destination", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "destination", cascade = CascadeType.MERGE)
     private Set<EdgeEntity> destinations;
 
 }

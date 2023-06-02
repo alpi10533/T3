@@ -21,10 +21,7 @@ public class GraphEntity {
     @Column(name = "id_graph", unique = true, nullable = false)
     private Long idGraph;
 
-    @OneToMany(mappedBy = "graphEntity", cascade = CascadeType.ALL)
-    private Set<EdgeEntity> edgeEntities;
-
-
-
+    @OneToMany(mappedBy = "graph", cascade = CascadeType.MERGE)
+    private Set<EdgeEntity> edges;
 
 }

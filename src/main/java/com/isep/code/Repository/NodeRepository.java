@@ -13,6 +13,6 @@ import java.util.List;
 public interface NodeRepository extends JpaRepository<NodeEntity, Long> {
 
     @Query("select u from NodeEntity u where u.place = :x")
-    NodeEntity findByPlace(@Param("x") PlaceEntity placeEntity);
+    NodeEntity findByPlace(@Param("x") PlaceEntity place);
 
 }

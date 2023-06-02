@@ -32,6 +32,6 @@ public class EdgeEntity {
 
     @ManyToOne
     @JoinColumn(name = "id_graph")
-    private GraphEntity graphEntity;
+    private GraphEntity graph;
 
 }
