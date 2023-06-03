@@ -8,14 +8,13 @@ import com.isep.code.Service.DefaultService;
 import com.isep.code.Service.GraphService;
 import com.isep.code.Service.PlaceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,7 +23,6 @@ public class MainController {
     private final PlaceService placeService;
     private final GraphService graphService;
     private final DefaultService defaultService;
-
 
     @Autowired
     public MainController(PlaceService placeService, GraphService graphService, DefaultService defaultService) {
@@ -36,12 +34,6 @@ public class MainController {
     @GetMapping("/")
     public String index() {
         return "index";
-    }
-
-    @GetMapping("/places")
-    public ResponseEntity<List<PlaceEntity>> getPlaces() {
-        List<PlaceEntity> places = placeService.findAllPlaces();
-        return new ResponseEntity<>(places, HttpStatus.OK);
     }
 
     @GetMapping("/admin")
@@ -92,7 +84,10 @@ public class MainController {
             return "redirect:/admin";
         }
         GraphEntity graph = graphService.saveGraph();
-        graphService.initGraph(graph, placeService.findAllPlaces(), Integer.parseInt(numberOfNeighbors), Integer.parseInt(travelMode));
+        List<PlaceEntity> places = placeService.findAllPlaces();
+        int tempNumberOfNeighbors = Integer.parseInt(numberOfNeighbors);
+        int tempTravelMode = Integer.parseInt(travelMode);
+        graphService.initGraph(graph, places, tempNumberOfNeighbors, tempTravelMode);
         return "redirect:/admin";
     }
 
@@ -102,8 +97,10 @@ public class MainController {
         if (Objects.equals(travelMode, "") || Objects.equals(graph, "")) {
             return "redirect:/admin";
         }
-        GraphEntity tempGraph = graphService.findGraphById(Long.parseLong(graph));
-        defaultService.saveDefault(tempGraph, Integer.parseInt(travelMode));
+        Long idGraph = Long.parseLong(graph);
+        int tempTravelMode = Integer.parseInt(travelMode);
+        GraphEntity tempGraph = graphService.findGraphById(idGraph);
+        defaultService.saveDefault(tempGraph, tempTravelMode);
         return "redirect:/admin";
     }
 
@@ -112,28 +109,28 @@ public class MainController {
         if (Objects.equals(graph, "")) {
             return "redirect:/admin";
         }
-        GraphEntity tempGraph = graphService.findGraphById(Long.parseLong(graph));
+        Long idGraph = Long.parseLong(graph);
+        GraphEntity tempGraph = graphService.findGraphById(idGraph);
         defaultService.deleteAllDefaultsByGraph(tempGraph);
-        graphService.deleteGraphByGraphOrId(tempGraph, Long.parseLong(graph));
+        graphService.deleteGraphByGraphOrId(tempGraph, idGraph);
         return "redirect:/admin";
     }
 
     @PostMapping("/search")
-    public String search(
-            @RequestParam("longitude") String longitude,
-            @RequestParam("latitude") String latitude,
+    @ResponseBody
+    public List<NodeEntity> search(
             @RequestParam("travelMode") String travelMode,
             @RequestParam("placeType") String placeType,
             @RequestParam(value = "budget", required = false) String budget,
             @RequestParam(value = "duration", required = false) String duration) {
-        if (Objects.equals(longitude, "") || Objects.equals(latitude, "") || Objects.equals(travelMode, "") || Objects.equals(placeType, "") || Objects.equals(budget, "") || Objects.equals(duration, "")) {
-            return "redirect:/";
+        if (Objects.equals(travelMode, "") || Objects.equals(budget, "") || Objects.equals(duration, "")) {
+            return Collections.emptyList();
         }
         DefaultEntity default_ = defaultService.findDefaultByTravelMode(Integer.parseInt(travelMode));
         GraphEntity graph = default_.getGraph();
-        PlaceEntity place = placeService.savePlace("Départ", "Départ", Double.parseDouble(latitude), Double.parseDouble(longitude), null, null, null, null, 0);
-        NodeEntity start = graphService.addStartToGraph(graph, place, placeService.findAllPlaces());
-        graphService.findBestSolution(graph, start, placeType, Double.parseDouble(budget), Integer.parseInt(duration));
-        return "redirect:/";
+        double tempBudget = Double.parseDouble(budget);
+        double tempDuration = Double.parseDouble(duration) / 2;
+        return graphService.findBestSolution(graph, placeType, tempBudget, tempDuration);
     }
+
 }

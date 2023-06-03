@@ -27,7 +27,9 @@ public class Helper {
                     .destinations(destination)
                     .mode(travelMode)
                     .await();
-            return matrix.rows[0].elements[0].distance.inMeters;
+
+            double durationInSeconds = matrix.rows[0].elements[0].duration.inSeconds;
+            return durationInSeconds/(24 * 60 * 60);
         } catch (Exception e) {
             e.printStackTrace();
         }

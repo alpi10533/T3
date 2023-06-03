@@ -61,62 +61,84 @@ public class GraphService {
         graphRepository.save(graph);
     }
 
-    public NodeEntity addStartToGraph(GraphEntity graph, PlaceEntity start, List<PlaceEntity> places) {
-        int numberOfNeighbors = graph.getNumberOfNeighbors();
-        int travelMode = graph.getTravelMode();
-        List<EdgeEntity> newEdges = new ArrayList<>();
-        Coordinate coord1 = new Coordinate(start.getLatitude(), start.getLongitude());
-        List<Distance> distances = new ArrayList<>();
-        for (PlaceEntity place2 : places) {
-            System.out.println(place2.getName());
-            if (!start.equals(place2)) {
-                Coordinate coord2 = new Coordinate(place2.getLatitude(), place2.getLongitude());
-                double distance = Helper.calculateDistance(coord1, coord2, travelMode);
-                distances.add(new Distance(place2, distance));
+    public NodeEntity findBestStart(GraphEntity graph, String placeType, double originalBudget, double originalDuration) {
+        Set<EdgeEntity> edges = graphRepository.findAllEdgesByGraph(graph);
+        NodeEntity bestNode = null;
+        double bestNote = 0.0;
+        for (EdgeEntity edge : edges) {
+            NodeEntity tempNode = edge.getDestination();
+            double tempDuration = edge.getWeight();
+            double tempNote = computeNote(tempNode, tempDuration, placeType, originalBudget, originalDuration);
+            if (bestNode == null || tempNote > bestNote) {
+                bestNode = tempNode;
+                bestNote = tempNote;
             }
         }
-        Collections.sort(distances);
-        for (int i = 0; i < numberOfNeighbors && i < distances.size(); i++) {
-            PlaceEntity neighbor = distances.get(i).place();
-            double distance = distances.get(i).distance();
-            EdgeEntity edgeEntity = saveEdge(graph, start, neighbor, distance);
-            newEdges.add(edgeEntity);
-        }
-
-        Set<EdgeEntity> edges = graph.getEdges();
-        edges.addAll(new HashSet<>(newEdges));
-        graph.setEdges(edges);
-        graphRepository.save(graph);
-        return findNodeByPlace(start);
+        return bestNode;
     }
 
-    public void findBestSolution(GraphEntity graph, NodeEntity start, String placeType, double budget, int duration) {
-        double originalBudget = budget;
-        int originalDuration = duration;
-        NodeEntity nextNode = start;
-        double lastNote = 0.0;
-        while(budget > 0 && duration > 0) {
-            System.out.println(nextNode);
-            budget = budget - nextNode.getPlace().getPrice();
-            Set<EdgeEntity> edges = graphRepository.findAllEdgesByGraphAndNode(graph, nextNode);
+    public List<NodeEntity> findBestSolution(GraphEntity graph, String placeType, double totalBudget, double totalDuration) {
+        double originalBudget = totalBudget;
+        double originalDuration = totalDuration;
+        List<NodeEntity> visitedNodes = new ArrayList<>();
+        NodeEntity node = findBestStart(graph, placeType, originalBudget, originalDuration);
+        double duration = 0.0;
+        while (totalBudget > 0 && totalDuration > 0) {
+            System.out.println(node.getPlace().getName());
+            totalBudget = totalBudget - node.getPlace().getPrice();
+            totalDuration = totalDuration - duration;
+            visitedNodes.add(node);
+            NodeEntity bestNode = null;
+            double bestNote = 0.0;
+            double bestDuration = 0.0;
+            Set<EdgeEntity> edges = graphRepository.findAllEdgesByGraphAndNode(graph, node);
             for (EdgeEntity edge : edges) {
-                NodeEntity node = edge.getDestination();
-                double note = computeNote(node.getPlace(), placeType);
-                if (note > lastNote) {
-                    nextNode = node;
-                    lastNote = note;
+                NodeEntity tempNode = edge.getDestination();
+                double tempDuration = edge.getWeight();
+                double tempNote = computeNote(tempNode, tempDuration, placeType, originalBudget, originalDuration);
+                if (!visitedNodes.contains(tempNode)) {
+                    if (bestNode == null || tempNote > bestNote) {
+                        bestNode = tempNode;
+                        bestNote = tempNote;
+                        bestDuration = tempDuration;
+                    }
                 }
             }
+            if (bestNode == null) {
+                for (EdgeEntity edge : edges) {
+                    NodeEntity tempNode = edge.getDestination();
+                    double tempDuration = edge.getWeight();
+                    double tempNote = computeNote(tempNode, tempDuration, placeType, originalBudget, originalDuration);
+                    if (!visitedNodes.contains(tempNode)) {
+                        if (bestNode == null || tempNote < bestNote) {
+                            bestNode = tempNode;
+                            bestNote = tempNote;
+                            bestDuration = tempDuration;
+                        }
+                    }
+                }
+            }
+            if (bestNode != null) {
+                node = bestNode;
+                duration = bestDuration;
+            } else {
+                break;
+            }
         }
-
+        return visitedNodes;
     }
 
-    public double computeNote(PlaceEntity place, String placeType) {
+    public double computeNote(NodeEntity node, double duration, String placeType, double originalBudget, double originalDuration) {
+        PlaceEntity place = node.getPlace();
+        double totalNote = 0.0;
         if (Objects.equals(place.getType(), placeType)) {
-            return 2.0;
-        } else {
-            return 1.0;
+            totalNote += 0.6;
         }
+        double budgetNote = place.getPrice() / originalBudget;
+        totalNote += budgetNote * 0.3;
+        double durationNote = duration / originalDuration;
+        totalNote += durationNote * 0.9;
+        return totalNote;
     }
 
     public EdgeEntity saveEdge(GraphEntity graph, PlaceEntity place1, PlaceEntity neighbor, double weight) {

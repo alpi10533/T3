@@ -47,7 +47,7 @@
             <div class="col-auto">
                 <select name="graph" class="form-control">
                     <option value="">Sélectionner un graphe</option>
-                    <option th:each="graph : ${graphs}" th:value="${graph.idGraph}" th:text="'Nombre de voisins: ' + ${graph.numberOfNeighbors} + ' - Type de déplacement: ' + (${graph.travelMode == 1 ? 'Voiture' : (graph.travelMode == 2 ? 'Marche' : (graph.travelMode == 3 ? 'Transports' : (graph.travelMode == 4 ? 'Vélo' : '')))})">
+                    <option th:each="graph : ${graphs}" th:value="${graph.idGraph}" th:text="'Nombre de voisins = ' + ${graph.numberOfNeighbors} + ' & Type de déplacement = ' + (${graph.travelMode == 1 ? 'Voiture' : (graph.travelMode == 2 ? 'Marche' : (graph.travelMode == 3 ? 'Transports' : (graph.travelMode == 4 ? 'Vélo' : '')))})">
                     ></option>
                 </select>
             </div>
@@ -61,7 +61,7 @@
             <div class="col-auto">
                 <select name="graph" class="form-control">
                     <option value="">Sélectionner un graphe</option>
-                    <option th:each="graph : ${graphs}" th:value="${graph.idGraph}" th:text="'Nombre de voisins: ' + ${graph.numberOfNeighbors} + ' - Type de déplacement: ' + (${graph.travelMode == 1 ? 'Voiture' : (graph.travelMode == 2 ? 'Marche' : (graph.travelMode == 3 ? 'Transports' : (graph.travelMode == 4 ? 'Vélo' : '')))})">
+                    <option th:each="graph : ${graphs}" th:value="${graph.idGraph}" th:text="'Nombre de voisins = ' + ${graph.numberOfNeighbors} + ' & Type de déplacement = ' + (${graph.travelMode == 1 ? 'Voiture' : (graph.travelMode == 2 ? 'Marche' : (graph.travelMode == 3 ? 'Transports' : (graph.travelMode == 4 ? 'Vélo' : '')))})">
                 </select>
             </div>
             <div class="col-auto">
