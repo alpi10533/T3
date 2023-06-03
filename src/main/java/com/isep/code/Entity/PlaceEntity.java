@@ -23,31 +23,31 @@ public class PlaceEntity {
     @Column(name = "id_place", unique = true, nullable = false)
     private Long idPlace;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name")
     private String name;
 
-    @Column(name = "type", nullable = false)
+    @Column(name = "type")
     private String type;
 
-    @Column(name = "latitude", nullable = false)
+    @Column(name = "latitude")
     private double latitude;
 
-    @Column(name = "longitude", nullable = false)
+    @Column(name = "longitude")
     private double longitude;
 
-    @Column(name = "start_day", nullable = false)
+    @Column(name = "start_day")
     DayOfWeek startDay;
 
-    @Column(name = "end_day", nullable = false)
+    @Column(name = "end_day")
     DayOfWeek endDay;
 
-    @Column(name = "start_hour", nullable = false)
+    @Column(name = "start_hour")
     LocalTime startHour;
 
-    @Column(name = "end_hour", nullable = false)
+    @Column(name = "end_hour")
     LocalTime endHour;
 
-    @Column(name = "price", nullable = false)
+    @Column(name = "price")
     private double price;
 
 }

@@ -18,7 +18,7 @@ public class NodeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_node")
+    @Column(name = "id_node", unique = true, nullable = false)
     private Long idNode;
 
     @OneToOne

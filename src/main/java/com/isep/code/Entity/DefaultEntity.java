@@ -11,27 +11,19 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "edge")
-public class EdgeEntity {
+@Table(name = "default_")
+public class DefaultEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_edge")
-    private Long idEdge;
-
-    @ManyToOne
-    @JoinColumn(name = "id_source")
-    private NodeEntity source;
-
-    @ManyToOne
-    @JoinColumn(name = "id_destination")
-    private NodeEntity destination;
-
-    @Column(name = "weight")
-    private double weight;
+    @Column(name = "id_default_", unique = true, nullable = false)
+    private Long idDefault;
 
     @ManyToOne
     @JoinColumn(name = "id_graph")
     private GraphEntity graph;
+
+    @Column(name = "travelMode")
+    private int travelMode;
 
 }
