@@ -1,0 +1,21 @@
+body {
+    margin: 0;
+}
+
+#title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 20vh;
+    width: 100vw;
+    background-color: #282c34;
+    color: white;
+    text-align: center;
+}
+
+#map {
+    width: 100%;
+    height: 400px;
+    background: #d6d6d6;
+}

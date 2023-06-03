@@ -3,8 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <title>T3</title>
+    <link th:href="@{/styles/style.css}" rel="stylesheet" />
 </head>
 <body>
-
+    <div id="app">
+        <div id="title">
+            <h1>Laissez-nous vous guider dans votre parcours de visite de Paris</h1>
+        </div>
+        <div id="map"></div>
+        <div id="form">
+            <form>
+                
+            </form>
+        </div>
+    </div>
+    <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBv1RNdSPkEVqTjPP6sL5y9KOKUDJLqxPg&callback=initMap"></script>
+    <script type="text/javascript" th:src="@{/js/script.js}"></script>
 </body>
 </html>
