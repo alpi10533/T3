@@ -1,5 +1,6 @@
 package com.isep.code.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,9 +27,11 @@ public class NodeEntity {
     private PlaceEntity place;
 
     @OneToMany(mappedBy = "source", cascade = CascadeType.MERGE)
+    @JsonBackReference
     private Set<EdgeEntity> sources;
 
     @OneToMany(mappedBy = "destination", cascade = CascadeType.MERGE)
+    @JsonBackReference
     private Set<EdgeEntity> destinations;
 
 }

@@ -1,5 +1,6 @@
 package com.isep.code.Entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,9 +29,11 @@ public class GraphEntity {
     private int travelMode;
 
     @OneToMany(mappedBy = "graph", cascade = CascadeType.MERGE)
+    @JsonManagedReference
     private Set<EdgeEntity> edges;
 
     @OneToMany(mappedBy = "graph", cascade = CascadeType.MERGE)
+    @JsonManagedReference
     private Set<DefaultEntity> defaults;
 
 }

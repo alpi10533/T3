@@ -86,7 +86,7 @@ public class GraphService {
         while (totalBudget > 0 && totalDuration > 0) {
             System.out.println(node.getPlace().getName());
             totalBudget = totalBudget - node.getPlace().getPrice();
-            totalDuration = totalDuration - duration;
+            totalDuration = totalDuration - (duration + (double) 3600 /(24 * 60 * 60));;
             visitedNodes.add(node);
             NodeEntity bestNode = null;
             double bestNote = 0.0;
@@ -132,14 +132,15 @@ public class GraphService {
         PlaceEntity place = node.getPlace();
         double totalNote = 0.0;
         if (Objects.equals(place.getType(), placeType)) {
-            totalNote += 0.6;
+            totalNote += 0.9;
         }
-        double budgetNote = place.getPrice() / originalBudget;
-        totalNote += budgetNote * 0.3;
-        double durationNote = duration / originalDuration;
-        totalNote += durationNote * 0.9;
+        double budgetNote = 1.0 - Math.abs(place.getPrice() - originalBudget) / originalBudget;
+        totalNote += budgetNote * 0.5;
+        double durationNote = 1.0 - Math.abs(duration - originalDuration) / originalDuration;
+        totalNote += durationNote * 0.7;
         return totalNote;
     }
+
 
     public EdgeEntity saveEdge(GraphEntity graph, PlaceEntity place1, PlaceEntity neighbor, double weight) {
         NodeEntity source = findNodeByPlace(place1);
