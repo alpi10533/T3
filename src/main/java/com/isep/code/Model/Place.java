@@ -1,5 +1,4 @@
-package com.isep.code;
-
+package com.isep.code.Model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -13,7 +12,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 @Table(name = "place")
-public class PlaceEntity {
+public class Place {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,4 +47,3 @@ public class PlaceEntity {
     private String price;
 
 }
-
