@@ -10,7 +10,7 @@ public class Helper {
 
     public static double calculateDistance(Coordinate coord1, Coordinate coord2, int k) {
         GeoApiContext context = new GeoApiContext.Builder()
-                .apiKey("AIzaSyBv1RNdSPkEVqTjPP6sL5y9KOKUDJLqxPg")
+                .apiKey("AIzaSyC3Forn3c3rD19FAI3ER_pqzCoSu5ZCftE")
                 .build();
         LatLng origin = new LatLng(coord1.latitude(), coord1.longitude());
         LatLng destination = new LatLng(coord2.latitude(), coord2.longitude());
