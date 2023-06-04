@@ -19,7 +19,7 @@ public class PlaceService {
         this.placeRepository = placeRepository;
     }
 
-    public void savePlace(String name, String type, double latitude, double longitude, DayOfWeek startDay, DayOfWeek endDay, LocalTime startHour, LocalTime endHour, double price) {
+    public PlaceEntity savePlace(String name, String type, double latitude, double longitude, DayOfWeek startDay, DayOfWeek endDay, LocalTime startHour, LocalTime endHour, double price) {
         PlaceEntity placeEntity = new PlaceEntity();
         placeEntity.setName(name);
         placeEntity.setType(type);
@@ -31,9 +31,10 @@ public class PlaceService {
         placeEntity.setEndHour(endHour);
         placeEntity.setPrice(price);
         placeRepository.save(placeEntity);
+        return placeEntity;
     }
 
-    public List<PlaceEntity> getAllPlaces() {
+    public List<PlaceEntity> findAllPlaces() {
         return placeRepository.findAll();
     }
 

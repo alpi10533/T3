@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-4">
+    <form method="post" action="/add-places">
+        <div class="form-row">
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">Ajouter les lieux par défault</button>
+            </div>
+        </div>
+    </form>
+    <form method="post" action="/add-graph" class="mt-4">
+        <div class="form-row">
+            <div class="col-auto">
+                <input type="number" name="numberOfNeighbors" placeholder="Nombre de voisins" class="form-control">
+            </div>
+            <div class="col-auto">
+                <select name="travelMode" class="form-control">
+                    <option value="">Sélectionner un type de déplacement</option>
+                    <option value="1">Voiture</option>
+                    <option value="2">Marche</option>
+                    <option value="3">Transports</option>
+                    <option value="4">Vélo</option>
+                </select>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">Ajouter un graphe</button>
+            </div>
+        </div>
+    </form>
+    <form method="post" action="/add-default-graph" class="mt-4">
+        <div class="form-row">
+            <div class="col-auto">
+                <select name="travelMode" class="form-control">
+                    <option value="">Sélectionner un type de déplacement</option>
+                    <option value="1">Voiture</option>
+                    <option value="2">Marche</option>
+                    <option value="3">Transports</option>
+                    <option value="4">Vélo</option>
+                </select>
+            </div>
+            <div class="col-auto">
+                <select name="graph" class="form-control">
+                    <option value="">Sélectionner un graphe</option>
+                    <option th:each="graph : ${graphs}" th:value="${graph.idGraph}" th:text="'Nombre de voisins = ' + ${graph.numberOfNeighbors} + ' & Type de déplacement = ' + (${graph.travelMode == 1 ? 'Voiture' : (graph.travelMode == 2 ? 'Marche' : (graph.travelMode == 3 ? 'Transports' : (graph.travelMode == 4 ? 'Vélo' : '')))})">
+                    ></option>
+                </select>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">Définir un graphe par défaut</button>
+            </div>
+        </div>
+    </form>
+    <form method="post" action="/delete-graph" class="mt-4">
+        <div class="form-row">
+            <div class="col-auto">
+                <select name="graph" class="form-control">
+                    <option value="">Sélectionner un graphe</option>
+                    <option th:each="graph : ${graphs}" th:value="${graph.idGraph}" th:text="'Nombre de voisins = ' + ${graph.numberOfNeighbors} + ' & Type de déplacement = ' + (${graph.travelMode == 1 ? 'Voiture' : (graph.travelMode == 2 ? 'Marche' : (graph.travelMode == 3 ? 'Transports' : (graph.travelMode == 4 ? 'Vélo' : '')))})">
+                </select>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-danger">Supprimer le graphe</button>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>
+

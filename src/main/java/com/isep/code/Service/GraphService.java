@@ -9,6 +9,7 @@ import com.isep.code.Utils.Helper;
 import com.isep.code.Repository.GraphRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -20,12 +21,17 @@ public class GraphService {
     private final NodeRepository nodeRepository;
 
 
-
     @Autowired
     public GraphService(GraphRepository graphRepository, EdgeRepository edgeRepository, NodeRepository nodeRepository) {
         this.graphRepository = graphRepository;
         this.edgeRepository = edgeRepository;
         this.nodeRepository = nodeRepository;
+    }
+
+    public GraphEntity saveGraph() {
+        GraphEntity graphEntity = new GraphEntity();
+        graphRepository.save(graphEntity);
+        return graphEntity;
     }
 
     public void initGraph(GraphEntity graph, List<PlaceEntity> places, int numberOfNeighbors, int travelMode) {
@@ -36,7 +42,6 @@ public class GraphService {
             for (PlaceEntity place2 : places) {
                 if (!place1.equals(place2)) {
                     Coordinate coord2 = new Coordinate(place2.getLatitude(), place2.getLongitude());
-                    System.out.println(coord1);
                     double distance = Helper.calculateDistance(coord1, coord2, travelMode);
                     distances.add(new Distance(place2, distance));
                 }
@@ -50,15 +55,92 @@ public class GraphService {
             }
 
         }
+        graph.setNumberOfNeighbors(numberOfNeighbors);
+        graph.setTravelMode(travelMode);
         graph.setEdges(new HashSet<>(edges));
         graphRepository.save(graph);
     }
 
-    public GraphEntity saveGraph() {
-        GraphEntity graphEntity = new GraphEntity();
-        graphRepository.save(graphEntity);
-        return graphEntity;
+    public NodeEntity findBestStart(GraphEntity graph, String placeType, double originalBudget, double originalDuration) {
+        Set<EdgeEntity> edges = graphRepository.findAllEdgesByGraph(graph);
+        NodeEntity bestNode = null;
+        double bestNote = 0.0;
+        for (EdgeEntity edge : edges) {
+            NodeEntity tempNode = edge.getDestination();
+            double tempDuration = edge.getWeight();
+            double tempNote = computeNote(tempNode, tempDuration, placeType, originalBudget, originalDuration);
+            if (bestNode == null || tempNote > bestNote) {
+                bestNode = tempNode;
+                bestNote = tempNote;
+            }
+        }
+        return bestNode;
     }
+
+    public List<NodeEntity> findBestSolution(GraphEntity graph, String placeType, double totalBudget, double totalDuration) {
+        double originalBudget = totalBudget;
+        double originalDuration = totalDuration;
+        List<NodeEntity> visitedNodes = new ArrayList<>();
+        NodeEntity node = findBestStart(graph, placeType, originalBudget, originalDuration);
+        double duration = 0.0;
+        while (totalBudget > 0 && totalDuration > 0) {
+            System.out.println(node.getPlace().getName());
+            totalBudget = totalBudget - node.getPlace().getPrice();
+            totalDuration = totalDuration - (duration + (double) 3600 /(24 * 60 * 60));;
+            visitedNodes.add(node);
+            NodeEntity bestNode = null;
+            double bestNote = 0.0;
+            double bestDuration = 0.0;
+            Set<EdgeEntity> edges = graphRepository.findAllEdgesByGraphAndNode(graph, node);
+            for (EdgeEntity edge : edges) {
+                NodeEntity tempNode = edge.getDestination();
+                double tempDuration = edge.getWeight();
+                double tempNote = computeNote(tempNode, tempDuration, placeType, originalBudget, originalDuration);
+                if (!visitedNodes.contains(tempNode)) {
+                    if (bestNode == null || tempNote > bestNote) {
+                        bestNode = tempNode;
+                        bestNote = tempNote;
+                        bestDuration = tempDuration;
+                    }
+                }
+            }
+            if (bestNode == null) {
+                for (EdgeEntity edge : edges) {
+                    NodeEntity tempNode = edge.getDestination();
+                    double tempDuration = edge.getWeight();
+                    double tempNote = computeNote(tempNode, tempDuration, placeType, originalBudget, originalDuration);
+                    if (!visitedNodes.contains(tempNode)) {
+                        if (bestNode == null || tempNote < bestNote) {
+                            bestNode = tempNode;
+                            bestNote = tempNote;
+                            bestDuration = tempDuration;
+                        }
+                    }
+                }
+            }
+            if (bestNode != null) {
+                node = bestNode;
+                duration = bestDuration;
+            } else {
+                break;
+            }
+        }
+        return visitedNodes;
+    }
+
+    public double computeNote(NodeEntity node, double duration, String placeType, double originalBudget, double originalDuration) {
+        PlaceEntity place = node.getPlace();
+        double totalNote = 0.0;
+        if (Objects.equals(place.getType(), placeType)) {
+            totalNote += 0.9;
+        }
+        double budgetNote = 1.0 - Math.abs(place.getPrice() - originalBudget) / originalBudget;
+        totalNote += budgetNote * 0.5;
+        double durationNote = 1.0 - Math.abs(duration - originalDuration) / originalDuration;
+        totalNote += durationNote * 0.7;
+        return totalNote;
+    }
+
 
     public EdgeEntity saveEdge(GraphEntity graph, PlaceEntity place1, PlaceEntity neighbor, double weight) {
         NodeEntity source = findNodeByPlace(place1);
@@ -88,5 +170,20 @@ public class GraphService {
     public NodeEntity findNodeByPlace(PlaceEntity place) {
         return nodeRepository.findByPlace(place);
     }
+
+    public GraphEntity findGraphById(Long id) {
+        return graphRepository.findById(id).orElse(null);
+    }
+
+    public List<GraphEntity> findAllGraphs() {
+        return graphRepository.findAll();
+    }
+
+    @Transactional
+    public void deleteGraphByGraphOrId(GraphEntity graph, Long id) {
+        edgeRepository.deleteAllByGraph(graph);
+        graphRepository.deleteById(id);
+    }
+
 
 }
