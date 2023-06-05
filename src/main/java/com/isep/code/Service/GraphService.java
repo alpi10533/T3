@@ -82,11 +82,7 @@ public class GraphService {
         double originalDuration = totalDuration;
         List<NodeEntity> visitedNodes = new ArrayList<>();
         NodeEntity node = findBestStart(graph, placeType, originalBudget, originalDuration);
-        double duration = 0.0;
         while (totalBudget > 0 && totalDuration > 0) {
-            System.out.println(node.getPlace().getName());
-            totalBudget = totalBudget - node.getPlace().getPrice();
-            totalDuration = totalDuration - (duration + (double) 3600 /(24 * 60 * 60));;
             visitedNodes.add(node);
             NodeEntity bestNode = null;
             double bestNote = 0.0;
@@ -97,33 +93,18 @@ public class GraphService {
                 double tempDuration = edge.getWeight();
                 double tempNote = computeNote(tempNode, tempDuration, placeType, originalBudget, originalDuration);
                 if (!visitedNodes.contains(tempNode)) {
-                    if (bestNode == null || tempNote > bestNote) {
+                    if (tempNote > bestNote) {
                         bestNode = tempNode;
                         bestNote = tempNote;
                         bestDuration = tempDuration;
                     }
                 }
             }
-            if (bestNode == null) {
-                for (EdgeEntity edge : edges) {
-                    NodeEntity tempNode = edge.getDestination();
-                    double tempDuration = edge.getWeight();
-                    double tempNote = computeNote(tempNode, tempDuration, placeType, originalBudget, originalDuration);
-                    if (!visitedNodes.contains(tempNode)) {
-                        if (bestNode == null || tempNote < bestNote) {
-                            bestNode = tempNode;
-                            bestNote = tempNote;
-                            bestDuration = tempDuration;
-                        }
-                    }
-                }
-            }
-            if (bestNode != null) {
-                node = bestNode;
-                duration = bestDuration;
-            } else {
-                break;
-            }
+            assert bestNode != null;
+            totalBudget = totalBudget - bestNode.getPlace().getPrice();
+            totalDuration = totalDuration - (bestDuration + (double) 3600 /(24 * 60 * 60));
+            node = bestNode;
+
         }
         return visitedNodes;
     }
@@ -134,9 +115,9 @@ public class GraphService {
         if (Objects.equals(place.getType(), placeType)) {
             totalNote += 0.9;
         }
-        double budgetNote = 1.0 - Math.abs(place.getPrice() - originalBudget) / originalBudget;
+        double budgetNote = (originalBudget - place.getPrice()) / originalBudget;
         totalNote += budgetNote * 0.5;
-        double durationNote = 1.0 - Math.abs(duration - originalDuration) / originalDuration;
+        double durationNote = (originalDuration - duration) / originalDuration;
         totalNote += durationNote * 0.7;
         return totalNote;
     }
