@@ -8,6 +8,16 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css"
         integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
         crossorigin="" />
+    <style>
+        .row {
+            padding-top: calc(var(--bs-gutter-x) * .5);
+            padding-bottom: calc(var(--bs-gutter-x) * .5);
+        }
+
+        .searchComponent {
+            margin-bottom: 1em;
+        }
+    </style>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
         crossorigin="anonymous"></script>
@@ -23,7 +33,7 @@
                 <div class="card h-100 mb-4">
                     <div class="card-body">
                         <form id="searchForm">
-                            <div class="form-group">
+                            <div class="form-group searchComponent">
                                 <label for="travelMode">Mode de déplacement :</label>
                                 <select id="travelMode" name="travelMode" class="form-control">
                                     <option value="1">Voiture</option>
@@ -32,7 +42,7 @@
                                     <option value="4">Vélo</option>
                                 </select>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group searchComponent">
                                 <label for="placeType">Type de lieu :</label>
                                 <select id="placeType" name="placeType" class="form-control">
                                     <option value="Monument">Monument</option>
@@ -42,15 +52,15 @@
                                     <option value="">Aucune préférence</option>
                                 </select>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group searchComponent">
                                 <label for="budget">Budget (en euro) :</label>
                                 <input type="number" id="budget" name="budget" class="form-control">
                             </div>
-                            <div class="form-group">
+                            <div class="form-group searchComponent">
                                 <label for="duration">Durée (en jour):</label>
                                 <input type="number" id="duration" name="duration" class="form-control">
                             </div>
-                            <input type="submit" value="Rechercher" class="btn btn-primary" id="searchFormSubmit">
+                            <input type="submit" value="Rechercher" class="btn btn-primary searchComponent" id="searchFormSubmit">
                         </form>
                     </div>
                 </div>
@@ -63,20 +73,19 @@
                 </div>
             </div>
         </div>
-        <div class="row">
+        <div class="row" id="stepDetails" style="display: none;">
             <div class="col-md-12">
                 <div class="card h-100 mb-4">
                     <div class="card-body">
-                        <div id="stepDetails" class="container" style="display: none;">
-                            <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                        <div class="container">
+                            <div class="btn-group searchComponent" role="group" aria-label="Button group with nested dropdown">
                                 <button type="button" class="btn btn-primary" id="previousButton" onclick="previous"
                                     disabled>Précédent</button>
                                 <button type="button" class="btn btn-primary" id="nextButton"
                                     onclick="next">Suivant</button>
                             </div>
-                            <div class="row">
-
-                            </div>
+                            <ol class="list-group list-group" id="description">
+                            </ol>
                         </div>
                     </div>
                 </div>
@@ -151,6 +160,15 @@
             });
         }
 
+        function displayDescription(displayedNodes) {
+            $("#description").empty();
+            displayedNodes.forEach(node => {
+                $("#description").append(
+                    "<li class=\"list-group-item\">" + (nodes.indexOf(displayedNodes[0]) + displayedNodes.indexOf(node) + 1) + ". " + node.place.name + " - " + node.place.price + "€" + "</li>"
+                )
+            });
+        }
+
         function connectPoints(nodes) {
             const latLngs = nodes.map(node => [node.place.latitude, node.place.longitude]);
             polyline = L.polyline(latLngs, { color: 'black' }).addTo(map);
@@ -171,6 +189,7 @@
             const displayedNodes = (step === 0) ? nodes : nodes.slice(actuallyDisplayed - 1, actuallyDisplayed + 1);
             displayPlaces(displayedNodes);
             connectPoints(displayedNodes);
+            displayDescription(displayedNodes);
         }
 
         window.onload = function () {
