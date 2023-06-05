@@ -82,7 +82,8 @@ public class GraphService {
         double originalDuration = totalDuration;
         List<NodeEntity> visitedNodes = new ArrayList<>();
         NodeEntity node = findBestStart(graph, placeType, originalBudget, originalDuration);
-        while (totalBudget > 0 && totalDuration > 0) {
+        boolean isNotOtherNodes = false;
+        while (totalBudget > 0 && totalDuration > 0 && !isNotOtherNodes) {
             visitedNodes.add(node);
             NodeEntity bestNode = null;
             double bestNote = 0.0;
@@ -100,11 +101,13 @@ public class GraphService {
                     }
                 }
             }
-            assert bestNode != null;
-            totalBudget = totalBudget - bestNode.getPlace().getPrice();
-            totalDuration = totalDuration - (bestDuration + (double) 3600 /(24 * 60 * 60));
-            node = bestNode;
-
+            if (bestNode != null) {
+                totalBudget = totalBudget - bestNode.getPlace().getPrice();
+                totalDuration = totalDuration - (bestDuration + (double) 3600 /(24 * 60 * 60));
+                node = bestNode;
+            } else {
+                isNotOtherNodes = true;
+            }
         }
         return visitedNodes;
     }
