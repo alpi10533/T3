@@ -82,11 +82,7 @@ public class GraphService {
         double originalDuration = totalDuration;
         List<NodeEntity> visitedNodes = new ArrayList<>();
         NodeEntity node = findBestStart(graph, placeType, originalBudget, originalDuration);
-        double duration = 0.0;
         while (totalBudget > 0 && totalDuration > 0) {
-            System.out.println(node.getPlace().getName());
-            totalBudget = totalBudget - node.getPlace().getPrice();
-            totalDuration = totalDuration - (duration + (double) 3600 /(24 * 60 * 60));;
             visitedNodes.add(node);
             NodeEntity bestNode = null;
             double bestNote = 0.0;
@@ -104,8 +100,11 @@ public class GraphService {
                     }
                 }
             }
+            assert bestNode != null;
+            totalBudget = totalBudget - bestNode.getPlace().getPrice();
+            totalDuration = totalDuration - (bestDuration + (double) 3600 /(24 * 60 * 60));
             node = bestNode;
-            duration = bestDuration;
+
         }
         return visitedNodes;
     }
@@ -116,9 +115,9 @@ public class GraphService {
         if (Objects.equals(place.getType(), placeType)) {
             totalNote += 0.9;
         }
-        double budgetNote = 1.0 - Math.abs(place.getPrice() - originalBudget) / originalBudget;
+        double budgetNote = (originalBudget - place.getPrice()) / originalBudget;
         totalNote += budgetNote * 0.5;
-        double durationNote = 1.0 - Math.abs(duration - originalDuration) / originalDuration;
+        double durationNote = (originalDuration - duration) / originalDuration;
         totalNote += durationNote * 0.7;
         return totalNote;
     }
