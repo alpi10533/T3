@@ -97,33 +97,15 @@ public class GraphService {
                 double tempDuration = edge.getWeight();
                 double tempNote = computeNote(tempNode, tempDuration, placeType, originalBudget, originalDuration);
                 if (!visitedNodes.contains(tempNode)) {
-                    if (bestNode == null || tempNote > bestNote) {
+                    if (tempNote > bestNote) {
                         bestNode = tempNode;
                         bestNote = tempNote;
                         bestDuration = tempDuration;
                     }
                 }
             }
-            if (bestNode == null) {
-                for (EdgeEntity edge : edges) {
-                    NodeEntity tempNode = edge.getDestination();
-                    double tempDuration = edge.getWeight();
-                    double tempNote = computeNote(tempNode, tempDuration, placeType, originalBudget, originalDuration);
-                    if (!visitedNodes.contains(tempNode)) {
-                        if (bestNode == null || tempNote < bestNote) {
-                            bestNode = tempNode;
-                            bestNote = tempNote;
-                            bestDuration = tempDuration;
-                        }
-                    }
-                }
-            }
-            if (bestNode != null) {
-                node = bestNode;
-                duration = bestDuration;
-            } else {
-                break;
-            }
+            node = bestNode;
+            duration = bestDuration;
         }
         return visitedNodes;
     }
